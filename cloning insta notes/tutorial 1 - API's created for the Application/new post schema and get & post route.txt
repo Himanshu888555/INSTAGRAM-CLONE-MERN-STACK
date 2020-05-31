@@ -1,0 +1,253 @@
+Now after genrating token and authentication of the user login ......
+
+
+We required  a post schema and post route :  
+
+
+
+for post schema just like made a user schema with email,name and password : 
+
+
+we have to create a new schhema regarding post in new file into "models" folder
+
+
+so we have created now a "post.js" file : 
+
+
+where we will be requiring mongoose module for mongoose.schema : 
+
+
+so now , 
+
+// code:     const mongoose = require('mongoose')
+             const{ObjectId} = mongoose.Schema.Types
+
+             
+                const postSchema = new mongoose.Schema({
+                    
+                          title:{                         //title for the post
+                             type:String,
+                              required:true
+                                 },
+                       body:{                             //body of the post 
+                           type:String,
+                           required:true
+                             },
+                          photo:{                             //photo for the post 
+                           type:String,
+                           default:"no photo"
+                                  },
+                          postedBy:{                      // ** here postId required relationship between user.js (user schema ) and post.js (post schema) as user details and id will be requiring from user schema ,  for that     : const{ObjectId} = mongoose.Schema.Types      
+ 
+                           type:ObjectId,       //user obbjectId will be here  for this have to initialize   :   const {ObjectType<object destructring>} = Mongoose.Schema.Types
+                           ref:"User"           // reference from user.js as we have given ref name in mongoose.model("User",userSchema)
+                                     }
+                               })                              
+
+                     }) 
+
+
+                 mongoose.model("Post",postSchema)
+
+
+
+Now after creating a post schema we have this schema in our main file / code :  app.js 
+
+so ,  In "app.js"    we will be requiring this schema
+                             
+               code :  require('./model/post')    //this i sthe way we call mongoose schema into other files.
+
+
+
+
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+we have to now create new route for our post : 
+
+as we all know that route is the middleware which executes first than the rest of code .
+
+
+so we will be creating new files in the folder "routes"
+ 
+
+   we have created new file "post.js"  in routes folder  : 
+
+
+    so first of all we will be requiring some initailzation and module calling from exprss , mongoose : 
+
+
+
+for that  ,   //code:          const express = require('express')
+                               const router = express.Router()
+                                const mongoose = require('mongoose')
+
+ 
+                                                                         
+
+
+for calling the post.js router file to the main code( app.js ) : 
+
+
+
+            now we will be creating a new router post as we have build a router for : sigin and signup pages.
+
+
+so for router post  :       
+                               //code: 
+
+                                                   router.post('/createpost',(req,res)=>{
+                                                             const{title,body}=req.body   //this is used for object destructuring   for obtainig title and body input from the body from the postman software.
+                                                                        })
+
+
+
+we will use  :    //code :     module.exports = router;
+
+
+Then again in the main code "app.js"   :    
+
+               to import post.js router file :    //code:      app.use(require('./routes/auth'))     // as we know that to call routes middleware we need :  express().use(require('<path of the file>'))
+
+
+
+
+** this module.export will be in the bottom of the code always .
+
+
+----------------------------------------------------------------
+
+now we will be creating a route for the post : 
+
+(1.) this is for explanantion of " req.user "  we will be collecting the user data in teh server or cmd .. as soon as we request for the post
+
+
+
+   for that first we have to require our code for authentication for login by token , 
+
+        so  we will be calling it as  :    
+    
+          in the initialization :                 const requireLogin = require('../middelware/reuireLogin')   //this will call this code into our post.js in router folder.
+
+    we will get the all details froom the user collection ..  for that we will be calling :   req.user (fromo requireLogin.js) 
+
+
+  //   code :  
+  
+
+    route.post('/createpost',requireLogin,(req,res)=>{                         //requireLogin first will check the authenticationa nd then check all the body and title inside the code.
+           const{title,body} = req.body
+           
+           if(!title || !body){
+               res.status(422).json({error:"Please eneter all the fields"})
+                   }
+              
+             console.log(req.user)     // this will request user data and get the data from the database and display it to the server console.
+             res.send("ok")            // this will respond and  send user a ok msg 
+
+
+                })  
+
+
+
+now go to the postman software -> their in new POST tab (URL:  localhost:5000/createpost )-> set headers table as  : 1) authorization    Bearer <token number>
+                                                                                         2) content-type     application/JSON
+    
+    then, in body :    {"title":"title1","body":"body1"}   
+
+now it will show all the post detials : id, name , photo , body , title etc. in the postman software and mongoo database too.
+
+
+----------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+
+(2.) now , main actual program : 
+
+
+  /// code:
+
+
+    const express = require('express')
+const router = express.Router()
+const mongoose = require('mongoose') 
+const requireLogin = require('../middleware/requireLogin')
+const Post = mongoose.model("Post")           //for calling the   post.js from the module folder which consists of post schema in the mongoose database.
+
+router.post('/createpost',requireLogin,(req,res)=>{
+    const{title,body} =req.body
+    if(!title || !body){
+       return res.status(422).json({error:"Please add all the dields"})
+      }
+
+    //   console.log(req.user)  // removed form actual code
+    //   res.send("ok")            // removed form actual code
+
+
+       req.user.password= undefined      //this we have do because when we tested our code the mongo db was showing the user password to us in the post section , so we have initialized password = undefined for security
+     
+      const post = new Post({
+          title,
+          body,
+          postedBy:req.user                  //in the postedBy used property of object post we will recieve all the user details as we have perform above at (1.)
+      })
+       post.save().then(result=>{            //if post is succesfully created then we ahve save it , and the result will be displayed
+          res.json({post:result})            // respopnd will be sen din the form of json           
+      })
+      .catch(err=>{                          // if any error we will catch it an dsimply display it ot the console.
+          console.log(err)
+      })
+})
+
+
+
+
+module.exports= router   // module.export is used to export this router into other js files or main program for a call
+
+
+
+IN THE SAME TAB AS WE HAVE DONE IN (1.) : 
+
+now again go to the postman software -> their in new POST tab( URL : localhost:5000/createpost ) -> set headers table as  : 1) authorization    Bearer <token number>
+                                                                                         2) content-type     application/JSON
+    
+    then, in body :    {"title":"title1","body":"body1"}   
+
+now it will show all the post detials : id, name , photo , body , title etc. in the postman software and mongoo database too.
+
+
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+   
+
+
+
+       
+
+
+
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

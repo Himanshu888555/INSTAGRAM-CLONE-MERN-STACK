@@ -1,0 +1,179 @@
+TOKEN  :   IF USER wants to access any resources after sign in then , we will be providing the token if it matches with it then user can access the resources easily . for secure 
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+for creating the token , we need to first install the module :   jsonwebtoken
+
+      install :    npm install jsonwebtoken
+
+after installaton :  
+   
+                    we will call the jsonwebtoken in  the  "auth.js" file using  :  
+              
+                                   const jwt = require('jsonwebtoken')
+
+
+As we all know TOKEN is very sensetive thing , for user and us too
+
+
+so we will open "key.js" file : 
+
+  where we have already stored our database key and password ,
+
+
+
+so In "key.js" :   
+                           export.module {
+                                       MONGOURI: " <it contains our database key and password> "
+                                       JWT_SECRET: " <unique values or alphabet> "                                      
+                                             }  
+
+as now we have stored our jwt token in the key.js file . 
+
+
+
+
+now switch back to ,     "auth.js"  file  :  where we have router.signup and router.signin functions.
+
+
+
+there again calling the token object ;
+
+          // code :     const { JWT_SCRET    //object destructring}=require('../keys')
+
+
+
+then in the ,     router.sigin('/signin' , (req,res)=>{})
+
+                           inside the password match function  : 
+
+
+                                         
+
+let start ,     now we will be using jwt package  ,  
+
+                                 const token = jwt.sign({_id:savedUser_id},JWT_SECRET)
+     
+                       here , we have  created the token with the help of email id we have savedUser fucntion . and generated the token
+
+//// code:    
+
+
+router.post('/signin',(req,res)=>{
+    const {email,password} = req.body
+    if(!email || !password){
+        res.status(422).json({error:"please provide email or password"})
+    }
+    User.findOne({email:email})
+    .then(savedUser=>{
+        if(!savedUser){
+            res.status(422).json({error:"Invalid email or password"})
+        }
+        bcrypt.compare(password,savedUser.password)
+        .then(doMatch=>{
+            if(doMatch){
+                // res.json({message:"successfully signed in"})
+                                    const token= jwt.sign({_id:savedUser._id},JWT_SECRET)
+                                    res.json({token})
+            }
+            else{
+                 res.status(422).json({error:"invalid email or password"})
+
+            }
+        }).catch(err=>{
+            console.log(err)   //this is for error from server site or developer site not for user errors.
+        })
+    })
+})
+
+
+
+module.exports = router 
+
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+                     **  now we will check whether it works or not : with the server. 
+
+
+now run your server -> in " postman server "  enter your user id and password which is been already stored -> click start button then -> in the console we will get the token  
+
+
+yes it works token is recieved .
+
+
+
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+now we have generated the TOKEN ,
+
+
+now we have to create "middleware"  using which we can authenticate whether the token matches with the user token .
+
+
+as we already know middleware is the program that execute first , before the actual program (for example : while online payment paytm before payment asks for password or fingerprint ,then execute the payment )
+
+
+
+
+
+
+
+// create the new folder for middleware , named "middleware"   in that create file :  "requiredLogin.js"
+
+
+here , 
+
+// code:             const jwt = require('jsonwebtoken')                               // we need to call jwt here because for comparing the tokens 
+                     const {JWT_SECRET} = require ('../keys')
+                     const  mongoose = require('mongoose')                             // to access the user data we have to call mongoose model into the requestLogin.js file
+                     const User = mongoose.model('User')
+
+                   module.exports= (req,res,next)=>{
+                  const authorization = req.headers                                   // here we are authorization is provided with value === Bearer <token value that user will be provided>
+                  if(!authorization){
+                   res.status(401).json({error: "you must be logged in "})            // here we have used "status 401" : it means invalid or unauthorized .
+                  }
+                 const token = authorization.replace("Bearer ","")                    // in the empty string we will be getting the token number.
+
+                jwt.verify(token,JWT_SECRET,(req,res)=>{                              // jwt will verify token with jwtsecret key if some err thn show it to console.
+                     if(err){
+                 return res.status(401).json({error:"you must be logged in"})
+                              }
+
+                       const {_id} = payload
+                       User.findById(_id).then(userdata=>{                                   // to access User data we have call mongoose model into the "requestLogin.js" file  here, user info is find by Id of _id where ids are saved // requesting user data.
+                      req.user = userdata
+                          next()                                              //next() is used for stoping the middleware and procedding the code further.        // next() will be called inside the block instead of outside the block because   if wew want to get the user detail in the server than if we call  "req.user" from other code than next will execte only if the block code will execute and over otherwise it next() will execute first and rest of the code will not be excuted .
+                            })
+                                                                                     // we use "next()" to move on the rest of the programme after this middleware invoke 
+                                })
+
+                              }
+
+
+
+
+
+after this code written ,
+
+we will check wether it works or not  : in first we directlr try to access than it thorw an error that "you should be logged in " 
+
+                                        so we will be running the server -> in the postman  -> add new tab for get/post -> select get -> in the header fill the table  -> key:authorization 
+                                                                                                                                                                          value : Bearer <token that we have generated earlier for the user name >
+
+
+
+                                           then again after doing all this , click on start button and you will get response from server .
+                                                           as token get matched , we an access the protected resources.
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+                                      
+
+

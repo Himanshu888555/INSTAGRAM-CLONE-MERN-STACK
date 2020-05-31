@@ -1,0 +1,378 @@
+//file name : app.js (main file)
+
+//To invoke the express or any framework : 
+
+const express(any variable) = require("<framework name>");
+const app (any variable) = <frameworkname>(); 
+const PORT =5000; (this is the localhost port number initialization)
+
+
+
+
+
+
+//To get request and respond to server and from server : 
+
+app(any variable used for call frameworkname) . get('/',(req,res)=>{
+console.log("home");
+res.send("hello world")
+
+})
+
+**explaination : 
+
+in this above program , we have used  .get for getting the respond from the server .
+
+then used  (' / ' (for location of page "home page" , (req,res) <two variables paraeters for respond and request > => {
+console.log("home"); to tell the serveradmin on which page we are now . so it get printed on the cmd or server 
+
+res.send (it is used to send the respond to the user after calling .get what is to be printed or executed for the user request made by user.)
+
+so , res.send("hello world") (hello world will be printed in the screen as a respond ).
+
+})
+
+
+
+
+
+
+
+//To listen what is been genrated by the port in server or cmd :
+
+app(any variable used for call frameworkname) . listen(PORT,()=>{   //in which port the server will learn
+
+console.log("Server is running on",PORT)
+
+})
+
+**explaination : 
+
+for listening the port respond we use 
+
+app.listen()
+
+app.listen(PORT (port name), () => {
+
+console.log("server is running on", PORT)  (this msg will be printed in the server or cmd ).
+
+})
+
+
+
+
+
+
+
+
+//coustomMiddleware :  is used to for invoking programm with is  to be executed , middleware will be be executing first at the place then , the user request will be handled .
+
+for example:  in payment apps customeMiddleware can be used for security check , by invoking middleware at any page and authentication can be made , then the payment can be processed futher .
+
+middle ware executes first then rest program at the front end .
+
+
+
+next is used for the program to proceed futher after execuation of middleware 
+
+
+
+
+
+
+
+
+//To run middleware for the specific pasge : 
+
+we have to call it will initailization of that page .
+
+for ex: 
+
+app.get('/about',customMiddleware,(req,res)=>{}
+
+
+
+
+
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+// filename : keys.js
+
+//forproject : 
+
+
+after performing mongo db database : 
+
+copy the connection string from the website and copy the string into the new js file within the same folder where project files are present .
+
+In keys.js file ->  
+
+                 code:    module.exports={
+                              MONGOURI:""mongodb+srv://GreatWhite: < password here which was created while creating the database >  @cluster0-ze0vn.mongodb.net/test?retryWrites=true&w=majority""
+                                         }  
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+//after that we need to install new module for easy communication with mongodb :
+
+using cmd -> same directory of project path - > npm install mongoose (this will download the new module of mongo )
+
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+//file name : app.js
+
+In the main file we will call the module that we have installed using NPM ( mongoose module )
+
+code : const mongoose = require("mongoose")   (same method used for calling or invoking any module of npm in the js code  const (any variable ) = require ("<module name >"))
+
+
+//for connection from mongoose : 
+
+
+  **note : we can call any js file as a module in the main file using  same method like we use to call our npm modules in the main code.
+          
+           here we are using the code for calling the connection string , we have copied from mongo atlas database    
+            const {MONGOURI  (it is object name or URL object) } : require('<path of the js file>') 
+
+code:  moongoose.connect(MONGOURI)
+
+      // after setting up the connection with the string , we have log the message to the console for connection status : 
+
+       moongoose.connection.on('connected',()=>{console.log("connection succesfull")})
+   
+       //in case of error we can pass this err message to the server or cmd     
+     
+        moongoose.connection.on('error',(err)=>{console.log("err connecting",err)})
+       
+
+this will connect the connection string with the main file and to the database that we have created in atlas . 
+
+
+
+// then we can connect to our mongodb server thorugh just running the main file (app.js)
+thorugh cmd : node app.js
+ 
+it will connect our server as well as our mongo db server
+
+
+**important : while running app.js thorugh cmd 
+              program will execute but some error will be genrated like newUserParser:true and useUnifiedTopology:true
+               
+              so will be add object of same error to the mongoose.connection method
+     
+              //code:  mongoose.connect(MONGOURI,{useNewParser:true,useUnifiedTopology:true})
+                
+               this will erase all the error and now program will easily start server and connect to mongodb.           
+
+              
+
+
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+Now as we have connected our database with server and mongo db;
+
+
+now we have to create schema of our user where we will be requiring :
+
+1. Name 2. Email 3.Password
+
+for that creating new folder in same directory , let it be "models"
+
+models - > user.js (new file created) 
+
+// In user.js  ->  we have create the schema : 
+
+we will call our mongoose module from npm into the code using require('mongoose') with the help of one variable.
+like we use to call other modules into the code.
+
+
+Then creat new variable with name userSchema  for creating new Instanse of mongoose.Schema (pre-defined class of function constructor ) 
+
+In userSchema of new mongoose.Schema  as one parameter we will be creating an object with: 
+
+ Name : 
+ email : 
+ password :    
+
+we will set their typedata as strings and required fiel true(required true means they are neccessary field to be filled ).
+
+
+then we will be exporting the schema directly using : 
+
+mongoose.model("User",userSchema (name of new Instanse that we have given))
+
+or 
+
+we could have exported it as  : 
+        
+             module.exports( mongoose.model("User",userSchema);
+     
+but for now as we have to use it here only , we can call it without the module.exports method.
+
+
+
+// code :      const mongoose = require('mongoose')
+               
+               const userSchema = new mongoose.Schema({
+                name:{
+       		 type:String,
+       		 required:true
+   		 },
+   		 email:{
+     		   type:String,
+    		    required:true
+
+    			},
+   		 password:{
+     		   type:String,
+        	   required:true
+  			  }
+			})
+
+		mongoose.model("User",userSchema)
+
+// we have used "User"  for as a name to call the schema into the other js file with this name . 
+   for example : const User = require('User')
+                  
+
+
+
+after this we will be calling it or importing it to our main file (app.js)
+
+directly by : 
+
+              require('./models/user'<path of file with folder>)
+               
+           //here we have called it directly without any variable.
+             and we can use the model directly as   :   
+                 
+                        mongoose.model("User"<the file name in which schema is created>)
+
+
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+we are now working on sign in  and sign out :
+
+
+we will not be writing all code in our main file (app.js)
+
+so we will be creating the new folder name  "routes" with the file "auth.js"
+
+it is easy for coder to see things if the code is distributed into the folders and not being at one place
+
+
+
+  //In auth.js : 
+
+                    we will again be requesting the express module using require('express') with the help of an variable .
+
+                     then , after calling the express
+                      we will be using express.Router() method and storing it to the new variable .
+
+        //code:   const express = require('express')
+                  const router = express.Router()    //router : This is a built-in middleware function in Express. It parses incoming request query parameters.
+
+
+
+  now we have to get the response and request from the router  the browser , router.get method will be used :  
+
+
+   //code:     router.get('/' ,(req,res)=>{
+                   console.log("hello");
+                          })  
+
+          
+then after that to export the file or code into the other codes :  we have use the module.exports   method : 
+
+               module.exports = router
+
+
+   final code:  const express = require('express')
+                  const router = express.Router()
+                
+                  router.get('/' ,(req,res)=>{
+                   console.log("hello");
+                          }) 
+                  
+                   module.exports= router
+
+
+       
+// Then in the main file we will be  call the auth.js code by  : 
+
+
+           app.use(require('./routes/auth'))  
+             
+            here , require is used because it has been exported from other file.
+                                                
+ This is same method using which we have called the custommiddleware variable  app.use()
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- 
+
+    after everythings sets up in router file , which will be used for sign in and sign out .
+
+
+// we will be again working in the auth.js file now :  
+
+
+
+    where : 
+ 
+
+              router.post()  which will be used for getting and sending post request while signing in and sign out by sending email , name and password.
+
+  
+code :  router.post('/signup',(req,res)=>{
+            console.log(req.body.name)
+                   })
+
+     we have used "sigup" as the page where this is need to be executed , 
+
+                we will again set parameters as (req,res) for request and respond  , 
+
+                inside the function : 
+                                         we will be requesting name from the body  
+                                        i.e :  req.body.name
+
+
+      we can not directly check the router req and respond on the server .
+      
+       for the same , we will be using a software called "postman"  which will help us to check the router functioning or testing .
+
+
+
+
+
+
+
+
+
+
+
+
+
+      
+
+                     
+
+
+
+
+
+
+
+
+
+               
+                
+               
+
+
+
+

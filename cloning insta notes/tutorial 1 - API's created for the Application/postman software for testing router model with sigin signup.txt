@@ -1,0 +1,327 @@
+postman software :  
+
+
+//for testing our router.post  functionlaity 
+
+
+after installing postman successfully: 
+and login
+
+within the software : add new workspace -> select POST (from the dropdown ) and add URL = http://localhost:5000/signup 
+
+then go to the "headers" option form the 'navbar'  :  
+               
+             there  we will be filling all columns in table : 
+                                                          key = content-type 
+                                                          value = application/json  (as we will be sending json data from the front end so we choose application/json)
+                                                          
+
+then from the 'navbar' we will select the "body" : 
+
+                                             select raw checkbutton .
+
+                                                          we will insert the json data in the console provided there : 
+                                                                                                                         for example: {
+                                                                                                                                       "name": "himanshu"
+                                                                                                                                        }
+                                                         let say i am passing name from it .
+
+then we have click on the "send"  button there .  do check the server of app.js should running in the backend
+
+
+/// Now this will show typeError in the page and server .
+    because our server or app.js will not parse JSON file type (we are telling the server to parse the incoming request and parse it to the json)
+
+
+
+
+   then we have make use of our file , for parsing JSON files : 
+
+                         // code:  app.use(express.json())   basically why we use app.use (because we have to use resources of different module into our file (app is variable which is having express in it as value (or poiting to the exprss))) 
+    
+so , this code will accept the incoming request and  parse the json data.
+ 
+
+**most important :we have to write this code just before the  app.use( require('./routes/auth'))
+
+
+after all this process , then again click the send button in postman application .
+
+now you will see that json file created here in the postman with jsut a name , will apper in the server or cmd 
+
+this is because auth.js  send the request of name from (req.body.name).
+
+
+
+
+
+
+
+// now as it works , we havve confirmed that it is now working properly .
+
+after removing the console.log(req.body.name)
+
+we will be destructing object using destruct object :    const {name,email,password} = req.body
+
+
+as we have done distructring of object here , it will be assigning name , email ,password automatically from the re.body object with same properties. (studied in java script)
+
+          // code :      router.post('/signup',(req,res)=>{
+                                 const{name,email,password}=req.body
+                               if(!email || !password || !name){
+                                    res.json({error:"please add all the fields"})
+                                                              }
+                                 res.json({message:"successfully posted"})
+                                            }) 
+
+              // here after using destructuring we will use 'if' condition if all the given object properties are not field than it will send an error using   res.json({error:"please add all the fields"})  or else res.json({message:"successfully posted"}).
+ 
+now, in the postman software -> inside the "body" -> add name, email, password as json formate 
+
+
+then click on "send" button to create the request ,  if all the field would have been field in json format , then it will deliver  "message":"successfully posted" other wise it will create error if any field missing. 
+
+
+
+
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+**now we can see the status of the postman server that it is showing   :    status : 200 OK        in server 200 means all is fine and everthing is workiing properly.
+
+** for the error we can send the status using   //code :  res.status(422).json(error{"please add all the fileds"})
+
+
+overall code for the sigup code  is :  router.post('/signup',(req,res)=>{
+    const{name,email,password}=req.body
+    if(!email || !password || !name){
+        res.status(422).json({error:"please add all the fields"})
+    }
+    res.json({message:"successfully posted"})
+}) 
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+now we will be posting actual data to our database . 
+
+
+we need to choose now , auth.js file : 
+
+
+where we need to remove soe code that we used for testing , 
+
+till now we have used all the console.log(statements) for testing our things.
+
+
+remove : res.json(message:{"successfully posted"})  form the auth.js file 
+
+
+
+in auth.js : 
+
+   now call moongoose database for actual data ,   and the user schema from the user.js file to auth.js   : 
+
+    //code:  const mongoose = require('mongoose')
+             const User = mongoose.model("User")   // we have called the user schema into  the mongoose.model("User") because this is the schema which will be used in the database.
+
+
+
+after that , we need to  code for the user email  ,  
+
+                     if email id inserted by user , then it will accept it ...
+                       if email found that is already registered in saveduser then it will thorugh an error 
+
+                 after that accept users new name , email ,password in user variable .....
+
+                  save user data using   :   user.save and so the message of successfull
+
+                         if error thorw an error .
+
+                               
+
+    // actuall code :     router.post('/signup',(req,res)=>{
+                           const{name,email,password}=req.body
+                           if(!email || !password || !name){
+                        res.status(422).json({error:"please add all the fields"})
+                           }
+                       User.findOne({email:email})   // findOne is the mongo db operator for finding one element in the database so here email.  then it will check email already exists or not.
+                    .then((saveduser)=>{
+                    if(saveduser){
+                           return res.status(422).json({error:"User is already with that email"})    //error generated if email found already in database 
+                                        }
+                            const user = new User({   //create new instanse of new user with email,name,password
+                             email,
+                             password,
+                             name
+
+                                 })
+
+                              user.save()             //save the user 
+                         .then(user=> {                                
+                          res.json({message:"saved successfully"})        // success msg to the user
+                                })
+                              .catch(err=>{
+                               console.log(err)
+                                   })
+
+                                     })
+                            .catch(err=>{console.log(err)})
+                             // res.json({message:"successfully posted"})
+                                   }) 
+
+
+
+                              module.exports = router   // exporting router code or files to other js files.
+
+
+
+
+now we will be running our code . 
+
+first start  server and then in "postman software"  we have to add user details in the "body"  section in the json format  :    { "name": "himanshu","email"="himanshu88855@gmail.com"}
+
+then , click on start button , where it will process and check the above condition  is user new, it should not be in data base already etc.
+
+if everythings get successfully executed then ,
+
+
+** GO TO MONGODB ATLAS WEBSITE TO THE DATABASE AFTER LOGIN ,   INSIDE OUR CULSTER , check for collection :  thier we can find the new user with same name, email and password which is actualling transfered into the database of mongodb .
+
+
+so this is how email and password will be stored in the database .   
+
+
+so we have stroed our first user in the database.
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+as we have saved the data to our database but 
+
+we have to hash the password field because in the database it cannot be visible and users privacy can be voileted.
+
+so we will be hashing password in " password hahsing.txt " folder .
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+AFTER router.post('/signup',(req,res)=>{})
+ 
+NOW , 
+
+## SIGN-IN 
+____________
+
+
+
+now, In the same "auth.js" file create new 
+
+router.post('/signin',(req,res)=>{})
+
+
+first of in this , we will destructing the email,password inserted by user .....
+
+for that  :     // code:    router.post('/signin',(req,res)=>{
+                                     const {email,password} = req.body  //destructing of object which we have learnt in javascript tutorials.
+                                     })
+
+ 
+
+                after that we will check whther the user already exsits or not  : 
+                                                                if not then we will show an error that invalid email or password  // user didnt signup before login 
+
+                                         if we found the user in the data with same email , then we will be comapring thier passsword ; 
+
+
+              here we will be comparing password with the "bcrypt"  as bcrypt.compare(password,savedUser.password)      // here we are comparing the password that comes form client side with the savedUser data in the database password.
+
+                              if user password matches with the database then we will   res.json({message:successfully login})
+
+
+                            or if not matched with the password  :  then error will be send 
+                                                         res.status(422).json({error:"invalid email or password"})
+
+
+
+
+
+
+   **** important :  we should always show error same as when your user is not signup to the application ,  
+                        while login some of us make password wrong , so error sometimes we catch that password is wrong.
+
+                   so , imagine if some hacker is hacking someones account :  then he would easily get that email is write and password is only wrong.
+
+                     so , to keep secure more  , we should generate error for both email and password . ie.:  invalid email or password.
+
+
+
+this is create a code for signin page .
+
+now run the srever  -> in postman inside the body type enter email and password in json format -> click send button -> if in console success message arises than you are signin , else your password and email may be invalid.
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+////Now problem arises , that after signed in process : 
+
+
+    user should be able to use the secured resources of the application ,
+
+    for that we have to provide user the token , where it should match with our token and provide access to the user of the secure resources.
+
+
+  so , for token we have create new text file :  token for user after sign in .txt 
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+                                
+                                                 
+
+
+                           
+
+
+
+
+
+
+
+
+
+
+                             
+
+
+
+
+
+
+
+
+
+
+
+ 
+ 
+                                                                           
+
+                                         
+
+                                                            
+
+
+                
+
+ 
+
+
+

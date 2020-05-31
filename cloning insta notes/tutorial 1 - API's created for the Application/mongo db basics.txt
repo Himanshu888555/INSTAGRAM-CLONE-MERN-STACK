@@ -1,0 +1,279 @@
+mongo db 
+
+
+db.version()
+
+-----------------------------------In mongo shell---------------------------------------------------------- 
+
+db.help() // for help 
+
+show dbs // to show all current databases 
+
+use <database name >  // for using databases or open 
+
+show collections // for dbs collection
+
+db.start // for starting or activating the database 
+
+db.stats()  // for knowing the status and info about the database 
+
+
+use forum // for switching or creating the new database 
+
+db.createCollection("<databasename>")
+
+
+
+-----------------------------------mongo operators---------------------------------------------------------- 
+
+db.getCollection('<databasename>').find({ object : {$in : ["",""]}})
+
+
+find()
+
+findOne()
+
+insertOne({})
+
+insertMany({},{},{})
+
+for ex: 
+
+insertOne() / insertMany() =>
+
+        db.<collectionName or database name> .insertOne({});
+
+                        or
+        
+        const anyVariable : {};
+        db.<collectionName or database name> .insertOne(anyVariable);
+
+
+
+
+      
+
+
+some query operators :
+
+$or  //or operator
+
+$and //and operator
+
+$eq  //equal operator
+
+$lt  // less than 
+ 
+$gt  //  greater than
+
+$ne  //
+
+$in  // include
+
+$nin  //
+
+$regex  // 
+
+
+
+
+db.getCollection('<databasename>').find(<query>)
+
+
+
+
+
+---------------------------------------------------------------------------------------------------------------
+*******these are the help methods for Find()************
+
+sort()  //sort thr resulting documents
+
+limit()  //limit the data  by passing any number value
+
+skip()  //skip the number of document  by passing number value
+
+
+
+
+db.getCollection('<databasename>').find(<query>).sort({query : 1})
+db.getCollection('<databasename>').find(<query>).skip(2)
+db.getCollection('<databasename>').find(<query>).limit(4)
+
+
+documents in mongo are sorted by object ID as default .
+
+
+
+
+--------------------------------------------------------------------------------------------
+
+updateOne()
+
+updateMany()
+
+(<query>,<update>,<options>)
+
+
+some update Operators : 
+
+
+$set // set or change the value
+
+$push
+
+$pull
+
+$rename
+
+$currentDate 
+
+$lookup
+
+$inc // used for incrementing the value 
+
+$unset  //it delete the value and empty it
+
+$addToSet
+
+
+db.getCollection('<databasename>').updateOne({<query ex: postsId:1212>},{<update operator and operation>})
+
+---------------------------------------------------------------------------------------------
+
+deleteOne(<query>)
+
+deleteMany(<query>)
+
+
+
+db.getCollection('<databasename>').deleteOne({<query for ex: title: {$exists :false >}})   // this will return all the object or json without having title in them 
+
+
+
+--------------------------------------------------------------------------------------------------
+
+
+
+Aggregation FrameWork in MOngoDb
+
+
+
+db.posts.aggregate([
+{$group: {_id:"$author.name"}}
+])
+
+
+it will provide all the author names
+
+
+
+-----------------------------------------------------------------------------------------
+
+
+mongo utilites  - these are sperate applications 
+
+
+mongoexport //export specific data from collection outside
+
+mongoimport  //it is used to import to mongodb
+
+mongodump  // it create  dumps from the mongodb
+
+mongorestore  // it is to restore from the dump mongodb
+
+
+
+
+in the shell : 
+
+mongoexport -d forum -c <collection name or database name > -0 <name of the file>
+
+
+
+
+mongodump 
+
+mongodump text.bson
+
+----------------------------------------------------------------------------------------------
+replica sets 
+
+
+primary  -> secondary 
+            secondary 
+             secondary
+
+
+if the primary database , colapse then the other secondary database will start working in replace of them and one the secondary db will become primary .
+
+but to change or access the db , we will always open primary db
+
+------------------------------------------------------------------------------------------------------------
+
+
+IN mongodb  if we search for an item from 100 of data :
+
+then, it will search for the data in the data set and will loop  it self 100 of time .
+
+to reduce that we should create and index of db
+
+
+
+
+but before that if we ,
+
+
+db.users.find({title:"xys"}).explain("exceutionStats")  //.explain will bring the all details 
+
+
+
+
+
+for index: 
+
+
+db.postscreateIndex({title:1})   //we have set the title index as 1
+
+this will create a index to title;
+
+
+
+now again we will find the title again ,
+
+
+it will only examine only one document ;  but before setting up the index it was taking 100 examinations
+
+
+this is how to make query more reliable and faster.
+
+
+
+
+
+=================================
+
+
+for joining collections:
+
+db.users.aggregate([{$lookup}])        // we will use the function aggregate   , using lookup wihch will left outer join to the collection, in the same db , to filtering the joining collection for processing
+
+
+  
+
+db.users.aggregate([{$lookup:{from:"posts",localField: "_id", foreignField: "userId", as:"userPosts"}}])
+
+
+
+
+  
+
+  
+
+ 
+
+
+
+
+
+
+

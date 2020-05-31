@@ -1,0 +1,453 @@
+In starting for USER INTERFACE :
+
+we will creat a react app folder client by using command in cmd in the same directory : 
+
+            npx create-react-app client<name of the folder>
+
+
+
+it will take time to install and set-up.
+
+
+after installing react pakage and setting up folder : 
+
+
+In cmd -> go tot the folder that we have created using  npx create-react-app client :  
+
+          cd client
+
+
+
+
+now we will again install another package  :   
+
+
+                       npm install react-router-dom   
+
+this package we installed for implementing routing .
+
+
+
+after installing the routing package , open the vscode in same directory using    :    code .
+
+
+----------------------------------------------------------------------------------
+
+
+after vscode starts ,
+
+
+we need to start the develpment server through CMD(command prompt)
+
+   by using in the same directory   /client :                             
+          
+                                                    npm start 
+
+
+                            
+after starting it ,
+
+
+
+we will begin our content : 
+
+
+             we will open the src file( source file ) ->  open App.js : 
+
+                                     we will romve the code which was pre-inserted, and delet logo file, and clear  "app.css" code too.
+
+ 
+                   
+
+
+             creating new folder inside the "src" folder  -> components folder - > "navbar.js"
+
+             
+
+Then for navbar , 
+
+              search for "Materialize" -> search for navbar.html ->copy the code and  PASTE it to the "navbar.js" file  in component folder.
+
+
+now, 
+
+      "navbar.js" ->  
+
+  
+           we will call the "react" model into the navbar.js file   by 
+
+
+                //    to import react model       //                               import React from 'react'
+
+
+
+
+          after importing the react to our navbar.js file ,
+
+
+                     // code :                import React from 'react'
+
+                                              const NavBar = () =>{                    //new arrow function with no parameter to call the function  
+                                               return(                                  //it will return the navbar UI 
+                                               <nav>
+                                                 <div className="nav-wrapper">
+                                                          <a href="#" className="brand-logo">Logo</a>
+                                                           <ul id="nav-mobile" className="right hide-on-med-and-down">
+                                                            <li><a href="sass.html">Sass</a></li>
+                                                              <li><a href="badges.html">Components</a></li>
+                                                                <li><a href="collapsible.html">JavaScript</a></li>
+                                                            </ul>
+                                                          </div>
+                                                        </nav>
+        
+                                                             )
+                                                              }
+
+                                                         export default NavBar                                     // FOR EXPORTING WE HAVE USED EXPORT DEFAULT <FUNCTION NAME >
+
+
+
+
+-----------------------------------------------------
+
+
+Now we will be importing this code into our main file "App.js"   using Import keyword:
+
+                     import NavBar form './component/Navbar.js'
+
+
+   Now inside the return statement :  we will call       <NavBar  /> 
+ 
+
+
+
+
+  We will check if the navbar is added to our page or not , 
+
+
+  before that  -> 
+ 
+
+                 go to the materialize website -> click on GET STARTED -> from CDN post -> copy CSS code from it (or link)
+
+          
+   Then inside the directory -> open public folder ->then inside the folder   open "index.html" ->  paste the code inside the HTML code above the title tag .
+
+
+
+
+
+
+Now check the server , we will get a "navbar" implemented.
+
+
+
+--------------------------------------------------------
+
+
+As, we have changed some colour and style of the font and background ,
+
+
+
+
+
+
+NOW , we will be implementing routing : 
+
+
+Inside the App.js
+
+         we will import from ' react-router-dom ' : 
+                                       
+                                import {BrowseRouter,Route} from 'react-router-dom'
+
+
+then we will set BrowserRouter as a Tag ,
+ 
+
+
+ //code :            <BrowserRouter>
+                     <NavBar />                    //navbar will be common in all the pages          
+                     <Route path = '/'>             //  here we will add the components like HOME, POST , SEARCH etc.
+                     
+
+                     </Route>
+                     </BrowserRouter>
+
+
+
+
+
+for adding components in the page ,
+
+
+we will create a new folder inside the "components folder"  ->  "screens folder " -> Home.js    
+
+inside this file we will be creating a functional components : 
+
+
+
+
+   we will :                               import react from 'react'
+
+                                    
+
+
+            now , just create a function HOME  for adding code inside it , 
+
+            then export the file using :    export default HOME
+
+
+
+
+                                        // code :           import react from 'react'
+                             
+                                                            const Home = () => {
+                                                                  return (
+                                                                    <h1>Home</h1> 
+                                                                    )
+                                                                   } 
+
+
+
+  
+Like this we will create all the components file  inside the components folder only i.e :    components ->    "Home.js"   "profile.js"  "Login.js"   "Signup.js"
+
+
+
+
+then , we require them in our main file "App.js"  so we will be importing them : 
+
+
+    //code:                                     
+
+
+
+                                             import Home from './components/screens/Home'
+                                             import Profile from './components/screens/Profile'
+                                             import Login from './components/screens/Login'
+                                             import Signup from './components/screens/Signup'
+
+
+
+Now , inside the code ....
+
+
+                           where we have set the route tag ,
+
+
+
+                  
+
+
+                                                   
+
+                                          
+ //code :            <BrowserRouter>
+                     <NavBar />                    //navbar will be common in all the pages          
+                     <Route path = '/'>             //  here we will add the components like HOME, POST , SEARCH etc.
+                     <Home />
+                     </Route>
+                     <Route path = '/signin'>     //this is the path from where it will get access to the page .
+                     <Signin />
+                     </Route>
+                     <Route path = '/Signup'>
+                     <Signup />
+                     </Route>
+                     <Route path = '/Profile'>
+                     <Profile />
+                     </Route>
+                     
+                     </BrowserRouter>
+
+
+Then  we will link these pages inside the "navbar.js" file , where we have copied "materialize website" code for html : 
+
+
+    //code: 
+
+
+import React from 'react'
+
+const NavBar = () =>{
+    return(
+        <nav>
+    <div className="nav-wrapper white">
+      <a href="/Home" className="brand-logo-left">Instagram</a>
+      <ul id="nav-mobile" className="right hide-on-med-and-down">
+        <li><a href="/Signin">Login</a></li>
+        <li><a href="/Signup">Signup</a></li>
+        <li><a href="/Profile">Profile</a></li>
+      </ul>
+    </div>
+  </nav>
+        
+    )
+}
+
+export default NavBar
+
+
+
+
+Now if we will check the react server page ,
+
+HOME page would be appearing in every page because of the slash symbol used in every route,
+
+To make Home page only in one page : 
+
+
+
+                 we will add  "exact" in the route path of "home"  : 
+
+
+
+
+                                                                 
+ //code :            <BrowserRouter>
+                     <NavBar />                    //navbar will be common in all the pages          
+                     <Route exact path = '/'>             //  here we will add the components like HOME, POST , SEARCH etc.  //exact will make this home page in one page only as we have used "/" in every path thats why it shoe home in every page. so , "exact " will solve all this .
+                     <Home />
+                     </Route>
+                     <Route path = '/signin'>     //this is the path from where it will get access to the page .
+                     <Signin />
+                     </Route>
+                     <Route path = '/Signup'>
+                     <Signup />
+                     </Route>
+                     <Route path = '/Profile'>
+                     <Profile />
+                     </Route>
+                     
+                     </BrowserRouter>
+
+
+
+Now we will check the page , every thing works fine , 
+
+but one issue arises when ,   when we click in the link : home, sigin , signup etc ..   
+
+
+------------PAGE RELOADS every time we click----------
+
+
+to solve this , go to NavBar.js inside the components folder : 
+
+
+  code:                 import {link} from 'react-router-dom'
+
+
+
+         we will be changing all the "<a>" anchor tag with "<Link>"  and removing all "href" with "to" 
+
+
+                  so code looks like this now    Inside the "NavBar.js": 
+
+
+
+//code:
+
+
+
+import React from 'react'
+
+import {Link} from 'react-router-dom'
+
+const NavBar = () =>{
+    return(
+        <nav>
+    <div className="nav-wrapper white">
+      <Link to="/" className="brand-logo-left">Instagram</Link>
+      <ul id="nav-mobile" className="right hide-on-med-and-down">
+        <li><Link to="/Signin">Login</Link></li>
+        <li><Link to="/Signup">Signup</Link></li>
+        <li><Link to="/Profile">Profile</Link></li>
+      </ul>
+    </div>
+  </nav>
+        
+    )
+}
+
+export default NavBar
+
+
+
+
+
+now everythings works fine .
+
+
+                            ***********        The react allow to change the page content dynamically , without any refresh .. this is the real use of react    *************
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+FIRSTLY , we have now changed the font of the instagram using google font -> search "grand hotel" -> and import@ code and copy past the css :  font family
+
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+now , we will work upon sigin / sigup UI -> we will copy code of a cart from "Materialize"
+
+
+
+
+
+we have successfully designed our pages with normal ui html and css and js
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                   
+
+
+
+
+
+        
+ 
+
+
+
+                                                             
+
+
+
+
+           
+
+
+
+
+

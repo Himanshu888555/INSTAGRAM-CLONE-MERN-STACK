@@ -1,0 +1,679 @@
+first of all we will start both the servers:
+
+1. react server - npm start
+
+2. node js server - node app
+
+
+
+------------------------------------------------------------------------------------
+1)
+
+we will be working on SIGNUP: 
+
+
+
+create couple of string in the front end code :   startup.js file: 
+
+
+const Signup=()=>{
+    const[name,setName]=useState("")                      //string for connection with the tags respectively   for name.
+
+    const[password,setPassword]=useState("")              //string for connection with the tags respectively  for password.
+
+    const[email,setEmail]=useState("")                     //string for connection with the tags respectively  for email.
+
+
+
+    const PostData=()=>{                                   //PostData function we will create for posting data
+       fetch ("http://localhost:5000/signup",{                  //we will be fetching request from the url 
+       method:"post",                                                  //set the method fot the  post
+       headers:{                          
+       "Content-Type":"application/json"                        //in the header it will be content-type  : application/json (same as we have done in postman software for get and post)
+        },
+        body:JSON.stringify({                                    // we will convert json to string 
+        name:"",         
+        password:"",
+        email:""
+        }).then( res=>res.json())                                    //if we get all data we will respond to server or user
+       .then(data=>{console.log(data)})                                     //then data will be console.log
+       
+     }
+
+
+
+    return (
+            <div className="mycard">
+            
+            <div className="card auth-card center">
+                <h2>Instagram</h2>
+        
+        <input type = "text" placeholder="UserName" value={name} onChange={(e)=>setName(e.target.value)}/>       //value will take the name string from input ,  //the event will change set name as input string. 
+        <input type = "text" placeholder="Email" value={email} onChange={(e)=>setEmail(e.target.value)} />          // value will take the email string from input , // the event will set the email as input string
+        <input type = "text" placeholder="Password" value={password} onChange={(e)=>setPassword(e.target.value)} />       //value will take the password from input , //the event will set the password as iput string 
+       
+
+         <button style={{borderRadius:"80px"}} className="btn  #64b5f6 blue lighten-2" 
+        
+         onClick={()=>PostData()}     //as soon as user click here to sign up , the button will call the postdata function that we have created above
+
+             >
+                        
+
+
+
+                  <i className="material-icons1 ">signup</i>
+                    </button> 
+            </div>
+
+                <div className="card auth-card1 center ">
+                Have an account?  <Link to="/Signin" >Log In</Link>
+                    </div>
+
+    
+                
+    
+        </div>
+    )
+}
+
+
+export default Signup
+
+
+
+
+
+
+
+
+
+
+
+Lets check whether all the thinks are correct or not : 
+
+                                               1) one error arises :    as we are running react and node js servers in different port     react in 3000 and node js in 5000
+
+
+                                                                 so , cors will block our request immediatly .
+
+                   to fix this error  :    we will use  "proxy" :"http://localhost:5000"     in the client folder -> package.JSOn file -> after private object past this .
+                                         this way we will fool react that , it is beign access from same port but they will be from different ports.
+
+
+
+                  Now every things works good .
+
+
+
+
+Now just add  error pop up using materialize : 
+
+
+                   npm install materialize-css
+
+then after that , we will use toast error pop ups , if all the fields are not enetered ,
+
+if all the fields are filled properly , then toast will show  saved succesfully and push us to signin page
+
+
+
+
+
+we can use    useHistory from react server for the  login . as it will be used to take history .
+
+
+
+
+**// code:    
+
+
+
+import React, { useState } from 'react'
+import {Link,useHistory} from 'react-router-dom'
+import M from 'materialize-css'
+
+
+const Signup=()=>{
+    const history = useHistory()
+    const[name,setName]=useState("")
+    const[password,setPassword]=useState("")
+    const[email,setEmail]=useState("")
+    const PostData=()=>{
+        if(! /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(email))   //this is the validate email 
+        {
+            M.toast({html:"Invalid email",classes:"#c62828 red darken-3"})
+            return
+        }
+                fetch("/signup",{
+        method:"post",
+        headers:{
+        "Content-Type":"application/json"
+        },
+        body:JSON.stringify({
+        name,
+        password,
+        email
+        })
+    }).then(res=>res.json())
+        .then(data=>{
+            if(data.error)
+            {
+               M.toast({html: data.error , classes:"#c62828 red darken-3"}) 
+            }
+            else{
+                M.toast({html: data.message , classes:"#43a047 green darken-1"})
+                history.push('/Signin')
+            }
+        })
+        
+      }
+
+    return (
+            <div className="mycard">
+            
+            <div className="card auth-card center">
+                <h2>Instagram</h2>
+        
+        <input type = "text" placeholder="UserName" value={name} onChange={(e)=>setName(e.target.value)} />
+        <input type = "text" placeholder="Email" value={email} onChange={(e)=>setEmail(e.target.value)} />
+        <input type = "text" placeholder="Password" value={password} onChange={(e)=>setPassword(e.target.value)} />
+
+        <button style={{borderRadius:"80px"}} className="btn  #64b5f6 blue lighten-2" 
+        onClick={()=>PostData()}
+        >
+                        <i className="material-icons1 ">signup</i>
+                    </button> 
+            </div>
+
+                <div className="card auth-card1 center ">
+                Have an account?  <Link to="/Signin" >Log In</Link>
+                    </div>
+
+    
+                
+    
+        </div>
+    )
+}
+
+
+export default Signup
+
+
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+we will copy same code for sigin page to : 
+
+
+
+just changing the path after login and name keyword will be deleted.
+
+
+
+
+////code : 
+
+
+
+
+import React,{useState} from 'react'
+import {Link,useHistory} from 'react-router-dom'
+import M from 'materialize-css'
+
+
+
+const Signin=()=>{
+    const history = useHistory()
+   
+    const[password,setPassword]=useState("")
+    const[email,setEmail]=useState("")
+    const PostData=()=>{
+         if(! /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(email))
+        {
+            M.toast({html:"Invalid email",classes:"#c62828 red darken-3"})
+            return
+        }
+                fetch("/signin",{
+        method:"post",
+        headers:{
+        "Content-Type":"application/json"
+        },
+        body:JSON.stringify({
+        
+        password,
+        email
+        })
+    }).then(res=>res.json())
+        .then(data=>{
+            console.log(data)
+            if(data.error)
+            {
+               M.toast({html: data.error , classes:"#c62828 red darken-3"}) 
+            }
+            else{
+                M.toast({html: "logged in " , classes:"#43a047 green darken-1"})
+                history.push('/')
+            }
+        }).catch(err=>{console.log(err)})
+        
+      }
+
+
+    return (
+        <div className="mycard">
+           
+                    <div className="card auth-card center">
+                        <h2>Instagram</h2>
+
+                        <input type = "text" placeholder="Email" value={email} onChange={(e)=>setEmail(e.target.value)} />
+                        <input type = "text" placeholder="Password" value={password} onChange={(e)=>setPassword(e.target.value)} />
+
+                   <button style={{borderRadius:"80px"}} className="btn  #64b5f6 blue lighten-2"
+                   onClick={()=>PostData()}
+                   >
+                      <i className="material-icons1 ">Log In</i>
+                   </button>
+
+                </div>
+
+               
+                        
+                <div className="card auth-card1 center ">
+                    Don't have an account? <Link to="/Signup" >Signup</Link>
+                </div>
+
+
+
+
+                </div>
+                
+
+            
+
+    )
+}
+
+
+export default Signin
+
+
+
+
+
+         
+
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+This is the code for sign up and signin to our home page . now it will just sigin to the home page .
+
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+
+Now as we are working on the CreatPost.js file for uploading the photos in the application.
+
+
+where we have to set the title , body and inage using creating a const variable inside the create post function.
+
+then , 
+we will take title , body and image using the image using object destructruing 
+
+             const [title,setTitle] = useState("")
+             const [body,setBody]  = useState("")
+             const [image,setImage] = useState("")
+
+then we will use these values in the 
+ 
+input tag for title and body and images 
+
+
+ <input type="text" placeholder="title" value={title}onChange={(e)=>setTitle(e.target.value)} />          //here we will value :title , which will set the event to target the event and get value from the input tag 
+           <input type="text" placeholder="body" value={body}onChange={(e)=>setBody(e.target.value)} />
+                    <div className="file-field input-field">
+                <div className="btn  #64b5f6 blue lighten-2">
+                    <span>ADD</span>
+                    <input type="file" />
+                </div>
+                <div className="file-path-wrapper">
+                    <input className="file-path validate" type="text" onchange={(e)=>setImage(e.target.files[0])} />    //here we are unclicking , uploading a image which the set image and target the file and the user details present  at [0] index i.e user name or id .
+
+                </div>
+                </div>
+
+
+
+
+
+----------------------------------------------------------------------------------
+for storing the image in the database ,
+
+
+we will be using ,   cloudinary web site , login to the website and 
+
+                                        go to settings where   need to click on "upload"  and scroll down below to 
+
+
+ upload presets :  we have 1) enable unsigned uploading 
+                           2) then ADD UPLOAD PRESET
+
+                          inside this we have give name of project and unsigned .
+
+
+
+then we will create our storage .
+
+
+
+
+
+BACK TO CODE:
+
+
+
+inside the CreatePost.js 
+
+
+we will amke a method named as postDetails :    
+
+
+first of all we will posting a image and then we will seprate request to our node js server .
+
+
+
+
+ const postDetails=()=>{
+const data =new FormData() //we are uplaoding a file so we have to use formdata
+data.append("file",image)  //inside the formdata we have to append some info or data 
+data.append("upload_preset","insta-clone") //these are the cloudinary  
+data.append("cloud_name","df7pdatbh")   //this is the unique name of my login in the cloudinary
+
+fetch("https://api.cloudinary.com/v1_1/df7pdatbh/image/upload",{   //netwrok request  //cpoy the url from the coludniary API app url  //append or add   /image/upload    into the string 
+      method:"post",    //we will call the method body  from above const[body,setBody]
+       body:data   // we will attach the data from   const data = new FormData into the post details. for sending details 
+    })
+    .then(res=>res.json()) // we will send the respond 
+
+    .then(data=>{
+        console.log(data)   //data will be displayed in console
+    })
+    .catch(err=>{console.log(err)})   //if some error then we catch it in error
+     }
+
+
+
+
+
+
+
+
+
+now we provide a action to "+"(photo add button)   onChange={()=>PostDetails}
+
+
+then we will check the programm that it runs and prvide us the details of user and url of image.
+
+
+
+
+
+
+
+
+
+Now we send the network request .
+
+for that first we have to , go to server folder -> modles-> post.js file (conatining the schema for the post)
+
+here we will change the photo object property :  
+
+
+
+                             we will cahange the photo property to      " required : true "
+
+
+
+
+then after that :
+
+
+
+in server folder :  "route folder" => post.js    where we have our code for the post title ,body 
+
+
+
+now we add one more fiel to it , pic(for photos)  :  there we will pic property to all object where required inthe code 
+
+
+
+-----------------------------------------------
+
+
+we will now get back to   client folder -> creatPost file -> now we will fecth the network request   that after that what will happen to the app : 
+
+
+
+
+//code:  
+
+
+fetch("/CreatPost",{
+    method:"post",
+    headers:{
+    "Content-Type":"application/json"
+    },
+    body:JSON.stringify({
+    
+    title,body,pic:url
+    })
+}).then(res=>res.json())
+    .then(data=>{
+      
+        if(data.error)
+        {
+           M.toast({html: data.error , classes:"#c62828 red darken-3"}) 
+        }
+        else{
+            M.toast({html: "" , classes:"#43a047 green darken-1"})
+            history.push('/')
+        }
+    }).catch(err=>{console.log(err)})
+
+}
+
+
+
+
+
+
+
+
+
+-----------------------------------------------
+
+
+now we will add materialize and  {userHistory} from react-router-dom
+
+
+
+ie: import M from materialize
+
+    import {useHistory} from 'react-route-dom'
+
+
+
+then be creating a method at CreatPost function : 
+
+
+const history = useHistory()
+
+
+
+now this is the final code :
+
+
+
+
+
+//code:   
+
+
+
+
+import React,{useState} from 'react'
+import M from 'materialize-css'
+import{useHistory} from 'react-router-dom'
+
+const CreatePost = () => {
+    const history =useHistory()
+    const[title,setTitle]=useState("")
+    const[body,setBody]=useState("")
+    const[image,setImage]=useState("")
+    const[url,setUrl]=useState("")
+
+
+    const postDetails=()=>{
+const data =new FormData() //we are uplaoding a file so we have to use formdata
+data.append("file",image)  //inside the formdata we have to append some info or data 
+data.append("upload_preset","insta-clone") //these are the cloudinary  
+data.append("cloud_name","df7pdatbh")   //this is the unique name of my login in the cloudinary
+
+fetch("https://api.cloudinary.com/v1_1/df7pdatbh/image/upload",{   //netwrok request  //cpoy the url from the coludniary API app url  //append or add   /image/upload    into the string 
+      method:"post",    //we will call the method body  from above const[body,setBody]
+       body:data   // we will attach the data from   const data = new FormData into the post details. for sending details 
+    })
+    .then(res=>res.json()) // we will send the respond 
+
+    .then(data=>{
+        setUrl(data.url) ;
+         //data will be displayed in console
+    })
+    .catch(err=>{console.log(err)})   //if some error then we catch it in error
+    
+  fetch("/CreatPost",{
+    method:"post",
+    headers:{
+    "Content-Type":"application/json"
+    },
+    body:JSON.stringify({
+    
+    title,body,pic:url
+    })
+}).then(res=>res.json())
+    .then(data=>{
+      
+        if(data.error)
+        {
+           M.toast({html: data.error , classes:"#c62828 red darken-3"}) 
+        }
+        else{
+            M.toast({html: "" , classes:"#43a047 green darken-1"})
+            history.push('/')
+        }
+    }).catch(err=>{console.log(err)})
+
+}
+
+   return(
+
+    
+       <div className="card input-filed auth-card center">
+           <input type="text" placeholder="title" value={title}onChange={(e)=>setTitle(e.target.value)} />
+           <input type="text" placeholder="body" value={body}onChange={(e)=>setBody(e.target.value)} />
+                    <div className="file-field input-field">
+                <div className="btn  #64b5f6 blue lighten-2">
+                    <span>ADD</span>
+                    <input type="file" onChange={(e)=>setImage(e.target.files[0])}/>
+                </div>
+                <div className="file-path-wrapper">
+                    <input className="file-path validate" type="text"  />
+                </div>
+                </div>
+
+
+                <button style={{borderRadius:"80px"}} className="btn  #64b5f6 blue lighten-2" 
+                onClick={()=>postDetails()}>
+                      <i   className="material-icons1 ">+</i>
+                   </button>
+       </div>
+    
+
+   )
+}
+
+
+export default CreatePost 
+
+
+
+
+
+
+
+
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+now we will check all working fine or not  , now to the add post -> add photo in the app but it shows error that you must be logged in  :  
+
+
+
+this is because post is a required Login field : login is must,
+
+
+
+this is error that after login too it shows this msg : 
+
+
+
+now we have to  match the token  of user and logged in use if matched then we will share him the secure resuorces of our app.
+
+
+
+
+
+
+
+---------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+

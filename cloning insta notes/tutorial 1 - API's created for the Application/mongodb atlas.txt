@@ -1,0 +1,29 @@
+mongodb atlas  : 
+
+
+for our project mongodb altas will be required for database 
+
+-First, of all we have create login account: 
+
+-then create new project inside the altas
+
+-after creating project , create new cluster with project name and defualt options of free clusters
+
+
+
+After creating cluster succesfully , then click on  "Network Access"  where we have to select the Add IP Address  then either use your current IP or set defualt IP which can we accessed form anywhere 
+
+then after setting IP address , 
+
+Then click "DataBase Access"  and add user , create UserName and then after adding user 
+
+
+
+Now click on clusters form the left hand side menu  : 
+
+to the newly generated cluster , click on connect  -> click on "connect to the application "  -> copy the connection string provided  - >  store it the same floder where your project is stored and creat new file and store this "connection string"
+
+ 
+
+
+-
